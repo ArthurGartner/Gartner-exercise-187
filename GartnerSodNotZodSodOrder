@@ -1,0 +1,273 @@
+//AUTHOR: ARTHUR GARTNER
+//COURSE: CPT 187
+//PURPOSE: THIS CLASS IS PART OF A PROGRAM THAT PROVIDES USERS THE ABILITY TO SELECT A SOD TYPE AND A QUANTITY OF THE SOD TYPE AND DISPLAYS A FINAL
+//		   SUMMARY. THE PROGRAM INCORPORATES TAX RATES AND A DISCOUNT RATE OF WHICH THE USER MAY SELECT AS WELL AS A RANDOM NUMBER GENERATOR TO SELECT A PRIZE. 
+//STARTDATE: 2019-11-28
+
+package edu.cpt187.gartner.module6participation;
+
+public class SodOrder 
+{
+	//DECLARE CLASS CONSTANTS
+	private final double ZERO_TOTAL = 0.0;
+	private final double TAX_RATE = .075;
+
+	//DECLARE NON CONSTANT ATTRIBUTES
+	private int[] discountCounts;
+	private int[] prizeCounts;
+	private char discountType = ' ';
+	private String itemName = "";
+	private double itemPrice = 0.0;
+	private String discountName = "";
+	private double discountRate = 0.0;
+	private int howMany = 0;
+	private int lastItemSelectedIndex = 0;
+	private String prizeName = "";
+
+	//SODORDER CLASS CONSTRUCTOR
+	public SodOrder()
+	{
+
+	}//END OF CLASS CONSTRUCTOR
+
+	//SETTERS
+	//METHOD TO SET COUNT ARRAYS
+	public void setItemCountArray(int borrowedRecordCount)
+	{
+		//LOCAL VARIABLES
+		int localDiscountCountsIndex = 0;
+		int localPrizeCountsIndex = 0;
+		
+		//THIS IF CHECKS TO SEE IF THE DISCOUNTCOUNTS ARRAY HAS ALREADY BEEN LOADED. THIS IS FIXING A POTENTIAL ISSUE WHERE A USER IMPORTS AN INVENTORY, THEN SELECTS AN ITEM AND ATTEMPTS TO IMPORT A NEW INVENTORY.
+		//ON THE REPORT SCREEN THE PRIZE AND DISCOUNT ARRAYS WOULD SHOW EXTRA COUNTS FROM THE PREVIOUS INVENTORY LOAD. IF THE DISCOUNTCOUTNS ARRAY HAS BEEN LOADED, THIS WILL RESET VALUES TO 0
+		if (discountCounts != null)
+		{
+			while (localDiscountCountsIndex < discountCounts.length)
+			{
+				discountCounts[localDiscountCountsIndex] = 0;
+				localDiscountCountsIndex++;
+			}
+		}
+		
+		//THIS IF CHECKS TO SEE IF THE PRIZECOUNTS ARRAY HAS ALREADY BEEN LOADED. THIS IS FIXING A POTENTIAL ISSUE WHERE A USER IMPORTS AN INVENTORY, THEN SELECTS AN ITEM AND ATTEMPTS TO IMPORT A NEW INVENTORY.
+			//ON THE REPORT SCREEN THE PRIZE AND DISCOUNT ARRAYS WOULD SHOW EXTRA COUNTS FROM THE PREVIOUS INVENTORY LOAD. IF THE PRIZECOUNTS ARRAY HAS BEEN LOADED, THIS WILL RESET VALUES TO 0
+		if (prizeCounts != null)
+		{
+			while (localPrizeCountsIndex < prizeCounts.length)
+			{
+				prizeCounts[localPrizeCountsIndex] = 0;
+				localPrizeCountsIndex++;
+			}
+		}
+	}
+	
+	//METHOD TO SET THE ITEMSELECTION ATTRIBUTE WITHIN THIS CLASS
+	public void setItemSelection(int borrowedSearchIndex)
+	{
+		lastItemSelectedIndex = borrowedSearchIndex;
+	}//END OF METHOD
+
+	//METHOD TO SET ITEMNAME ATTRIBUTE
+	public void setItemName(String[] borrowedItemNames)
+	{
+		itemName = borrowedItemNames[lastItemSelectedIndex];
+	}//END OF METHOD
+
+	//METHOD TO SET THE ITEMPRICE ATTRIBUTE
+	public void setItemPrice(double[] borrowedItemPrices)
+	{
+		itemPrice = borrowedItemPrices[lastItemSelectedIndex];
+	}//END OF METHOD
+
+	//METHOD TO SET THE HOWMANY ATTRIBUTE
+	public void setHowMany(int borrowedHowMany)
+	{
+		howMany = borrowedHowMany;
+	}//END OF METHOD
+
+	//METHOD TO SET THE DISCOUNTTYPE ATTRIBUTE
+	public void setDiscountType(char borrowedMenuSelection)
+	{
+		discountType = borrowedMenuSelection;
+	}//END OF METHOD
+
+	//METHOD TO SET THE DISCOUNTNAME ATTRIBUTE
+	public void setDiscountName(String[] borrowedDiscountNames)
+	{		
+		//SELECTION STRUCTURE TO CHECK IF THE ARRAY HAS BEEN GIVEN A FIXED LENGTH (INITIALIZED). USING THIS CHECK ENSURES THAT THE PROGRAM WHEN LOOPED WILL NOT OVERWRITE THE
+		//PREEXISTING COUNTER ARRAY.
+		if (discountCounts == null)
+		{
+			discountCounts = new int[borrowedDiscountNames.length];
+		}
+		
+		//SELECTION STRUCTURE
+		if (discountType == 'A')
+		{
+			discountName = borrowedDiscountNames[0];
+			discountCounts[0]++;
+		}
+		else if (discountType == 'B')
+		{
+			discountName = borrowedDiscountNames[1];
+			discountCounts[1]++;
+		}
+		else
+		{
+			discountName = borrowedDiscountNames[2];
+			discountCounts[2]++;
+		}
+		
+	}//END OF METHOD
+
+	//METHOD TO SET THE DISCOUNTRATE ATTRIBUTE
+	public void setDiscountRate(double[] borrowedDiscountRate)
+	{
+		//SELECTION STRUCTURE
+		if (discountType == 'A')
+		{
+			discountRate = borrowedDiscountRate[0];
+		}
+		else if (discountType == 'B')
+		{
+			discountRate = borrowedDiscountRate[1];
+		}
+		else
+		{
+			discountRate = borrowedDiscountRate[2];
+		}
+	}//END OF METHOD
+
+	//METHOD TO SET PRIZE NAME
+	public void setPrizeName(String[] borrowedPrizeNames, int borrowedPrizeIndex)
+	{
+		//SELECTION STRUCTURE TO CHECK IF THE ARRAY HAS BEEN GIVEN A FIXED LENGTH (INITIALIZED). USING THIS CHECK ENSURES THAT THE PROGRAM WHEN LOOPED WILL NOT OVERWRITE THE
+		//PREEXISTING COUNTER ARRAY.
+		if (prizeCounts == null)
+		{
+			prizeCounts = new int[borrowedPrizeNames.length];
+		}
+
+		//ASSIGN PRIXENAME VARIABLE TO THE RANDOM INDEX
+		prizeName = borrowedPrizeNames[borrowedPrizeIndex];
+		
+		//INCREMENT COUNTER
+		prizeCounts[borrowedPrizeIndex]++;
+	}//END OF METHOD
+
+	//METHOD TO DECREASE STOCK
+	public void setDecreaseInStock(Inventory borrowedInventoryObject)
+	{
+		borrowedInventoryObject.setReduceStock(howMany);
+	}//END OF METHOD
+
+	//GETTERS
+	//METHOD TO GET CURRENT STOCK ON ITEM
+	public int getInStockCount(int[] borrowedInStockCounts)
+	{
+		return borrowedInStockCounts[lastItemSelectedIndex];
+	}//END OF METHOD
+
+	//METHOD TO GET ITEMID ARRAY
+	public int getItemID(int[] borrowedItemIDs)
+	{
+		return borrowedItemIDs[lastItemSelectedIndex];
+	}//END OF METHOD
+	
+	//METHOD TO GET ITEMNAME ATTRIBUTE
+	public String getItemName()
+	{
+		return itemName;
+	}//END OF METHOD
+
+	//METHOD TO GET ITEMPRICE ATTRIBUTE
+	public double getItemPrice()
+	{
+		return itemPrice;
+	}//END OF METHOD
+
+	//METHOD TO GET HOWMANY ATTRIBUTE
+	public int getHowMany()
+	{
+		return howMany;
+	}//END OF METHOD
+
+	//METHOD TO GET DISCOUNTNAME ATTRIBUTE
+	public String getDiscountName()
+	{
+		return discountName;
+	}//END OF METHOD
+
+	//METHOD TO GET DISCOUNTRATE ATTRIBUTE
+	public double getDiscountRate()
+	{
+		return discountRate;
+	}//END OF METHOD
+
+	//METHOD TO GET DISCOUNTCOUNTS ARRAY
+	public int[] getDiscountCounts()
+	{
+		return discountCounts;
+	}//END OF METHOD	
+
+	//METHOD TO GET DISCOUNT AMOUNT
+	public double getDiscountAmt()
+	{
+		return itemPrice * discountRate;
+	}//END OF METHOD
+
+	//METHOD TO GET DISCOUNTED AMOUNT
+	public double getDiscountPrice()
+	{
+		return itemPrice - getDiscountAmt();
+	}//END OF METHOD
+
+	//METHOD TO GET PRIZENAME
+	public String getPrizeName()
+	{
+		return prizeName;
+	}//END OF METHOD
+
+	//METHOD TO GET PRIZENAMES ARRAY
+	public int[] getPrizeCounts()
+	{
+		return prizeCounts;
+	}//END OF METHOD
+
+	//METHOD TO GET SUBTOTAL
+	public double getSubTotal()
+	{
+		return getDiscountPrice() * howMany;
+	}//END OF METHOD
+
+	//METHOD TO GET TAX_RATE
+	public double getTaxRate()
+	{
+		return TAX_RATE;
+	}//END OF METHOD
+
+	//METHOD TO GET THE TAX AMOUNT
+	public double getTaxAmt()
+	{
+		return getSubTotal() * TAX_RATE;
+	}//END OF METHOD
+
+	//METHOD TO GET THE TOTAL COST
+	public double getTotalCost()
+	{	
+		//THIS SELECTION STRUCTURE WAS CREATED TO REMOVE A POTENTIAL ERROR DURING THE DISPLAYFINALREPORT METHOD OF THE MAINMETHODCLASS. THIS ERROR OCCURS WHEN THE USER SELECTS AN ITEM AND A QUANTITY THAT IS UNAVAILABLE DURING THE FIRST INITIAL PROGRAM RUN.
+		//AFTER THE STOCK DISPLAY ERROR IS GIVEN, IF THE USER DECIDES TO QUIT THEN THE PROGRAM WILL ATTEMPT TO PRINT THE FINAL REPORT. THIS IS BECAUSE THE SODORDER CLASS HAS THE ITEMPRICE AND HOWMANY VARIABLES ASSIGNED SO THE SELECTION STRUCTURE TO CHECK
+		//IF THE TOTALCOST IS GREATER THAN 0.0 IS TRUE. THIS RESULTS IN THE PROGRAM ATTEMPTING TO PRINT THE REMAINING VARIABLES THAT HAVE NOT YET BEEN INITIALIZED RESULTING IN A THROWN ERROR. THIS IS BECAUSE THE PROGRAM HAS NOT YET GONE THROUGH A FULL 
+		//LOOP YET SINCE THIS IS WITHIN THE INITIAL RUN SO VARIABLES SUCH AS DISCOUNTTYPE OR NOT INITIALIZED. THIS SELECTION STRUCTURE MITIGATES THIS BY CHECKING TO SEE IF THE DISCOUNTTYPE VARIABLE HAS BEEN INITIALIZED YET, SOMETHING THAT HAPPENS AFTER THE 
+		//INVENTORY STOCK OF THE USER INPUTTED QUANTITY IS VERIFIED TO BE EQUAL TO OR GREATER THAN.
+		if (discountType == ' ')
+		{
+			return ZERO_TOTAL;
+		}
+		else
+		{
+			return getSubTotal() + getTaxAmt();
+		}
+	}//END OF METHOD
+
+}//END OF CLASS
