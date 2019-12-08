@@ -1,0 +1,63 @@
+//AUTHOR: ARTHUR GARTNER
+//COURSE: CPT 187
+//PURPOSE: THIS CLASS IS PART OF A PROGRAM THAT PROVIDES USERS THE ABILITY TO SELECT A SOD TYPE AND A QUANTITY OF THE SOD TYPE AND DISPLAYS A FINAL
+//		   SUMMARY. THE PROGRAM INCORPORATES TAX RATES AND A DISCOUNT RATE OF WHICH THE USER MAY SELECT AS WELL AS A RANDOM NUMBER GENERATOR TO SELECT A PRIZE. 
+//STARTDATE: 2019-11-28
+
+package edu.cpt187.gartner.module6participation;
+
+//IMPORT PRINTWIRTER
+import java.io.PrintWriter;
+
+//IMPORT FILEWRITER
+import java.io.FileWriter;
+
+//IMPORT IOEXCEPTION
+import java.io.IOException;
+
+public class OrderWriter 
+{
+	//DECLARE CONSTANTS
+	private final int NOT_FOUND = -1;
+	private final int RESET_VALUE = 0;
+	
+	//DECLARE NON CONSTANT ATTRIBUTES
+	private String masterFileName = "";
+	private int recordCount = RESET_VALUE;
+	
+	//ORDERWRITER CLASS CONSTRUCTOR
+	public OrderWriter(String borrowedFileName)
+	{
+		masterFileName = borrowedFileName;
+	}//END OF CLASS CONSTRUCTOR
+	
+	//SETTERS
+	public void setWriteOrder(int borrowedItemID, String borrowedItemName, double borrowedItemPrice, int borrowedQuantity, double borrowedOrderCost)
+	{
+		try 
+		{
+			PrintWriter filePW = new PrintWriter(new FileWriter(masterFileName, true));
+			filePW.printf("%d\t%s\t%.2f\t%d\t%.2f\r", borrowedItemID, borrowedItemName, borrowedItemPrice, borrowedQuantity, borrowedOrderCost);
+			filePW.close();
+			
+			//INCREMENT THE RECORD COUNTER
+			recordCount++;
+		}
+		
+		catch (IOException ex)
+		{
+			recordCount = NOT_FOUND;
+		}
+	}
+	
+	//GETTERS
+	public String getFileName()
+	{
+		return masterFileName;
+	}
+	
+	public int getRecordCount()
+	{
+		return recordCount;
+	}
+}
