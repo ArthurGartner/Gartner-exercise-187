@@ -1,0 +1,365 @@
+//AUTHOR: ARTHUR GARTNER
+//COURSE: CPT 187
+//PURPOSE: THIS CLASS IS PART OF A PROGRAM THAT PROVIDES USERS THE ABILITY TO SELECT A SOD TYPE AND A QUANTITY OF THE SOD TYPE AND DISPLAYS A FINAL
+//		   SUMMARY. THE PROGRAM INCORPORATES TAX RATES AND A DISCOUNT RATE OF WHICH THE USER MAY SELECT AS WELL AS A RANDOM NUMBER GENERATOR TO SELECT A PRIZE. 
+//STARTDATE: 2019-11-28
+
+package edu.cpt187.gartner.module6participation;
+
+//IMPORT RANDOM OBJECT
+import java.util.Random;
+
+//IMPORT SCANNER
+import java.util.Scanner;
+
+//IMPORT FILEINPUTSTREAM
+import java.io.FileInputStream;
+
+//IMPORT IOEXCEPTION
+import java.io.IOException;
+
+public class Inventory 
+{
+	//DECLARE CLASS CONSTANTS
+	private final String[] DISCOUNT_NAMES = {"Member", "Senior", "No Discount"};
+	private final double[] DISCOUNT_RATES = {0.25, 0.15, 0.0};
+	private final String[] PRIZE_NAMES = {"Candy", "Stuffed Animal", "Fidget Spinner"};
+	private final int MAX_ITEMS = 5;
+	private final int NOT_FOUND = -1;
+	private final int RESET_VALUE = 0;
+
+	//DECLARE NON CONSTANT ATTRIBUTES
+	private int[] itemIDs = new int[MAX_ITEMS];
+	private String[] itemNames = new String[MAX_ITEMS];
+	private double[] itemPrices = new double[MAX_ITEMS];
+	private int[] orderQuantity = new int[MAX_ITEMS];
+	private double[] orderTotal = new double[MAX_ITEMS];
+	private int[] inStockCounts = new int[MAX_ITEMS];
+	private int itemSearchIndex = 0;
+	private int recordCount = 0;
+
+	//INITIATE THE RANDOM OBJECT
+	private Random prizeGenerator = new Random();
+
+	//INVENTORY CLASS CONSTRUCTOR
+	public Inventory()
+	{
+
+	}//END OF CLASS CONSTRUCTOR
+
+	//SETTERS
+	//METHOD TO REDUCE THE STOCK OF IN ITEM BY THE AMOUNT PURCHASED BY THE USER
+	public void setReduceStock(int borrowedHowMany)
+	{
+		inStockCounts[itemSearchIndex] =  inStockCounts[itemSearchIndex] - borrowedHowMany;
+	}//END OF METHOD
+
+	//METHOD TO INITIALLY SET THE INVENTORY STOCKS
+	public void setLoadItems(String borrowedFileName)
+	{
+		//LOCAL VARIABLES
+		String tmpString = "";
+		int tmpInt = 0;
+		double tmpDouble = 0;
+		
+		//RESET RECORD COUNT TO 0
+		recordCount = RESET_VALUE;
+		
+		try
+		{
+			//INITIATE SCANNER
+			Scanner infile = new Scanner(new FileInputStream(borrowedFileName));
+			
+			//VERIFICATION LOOP
+			while (infile.hasNext() == true && recordCount < MAX_ITEMS)
+			{
+				//WRITING DATA TO ARRAYS
+				itemIDs[recordCount] = infile.nextInt();
+				itemNames[recordCount] = infile.next();
+				itemPrices[recordCount] = infile.nextDouble();
+				inStockCounts[recordCount] = infile.nextInt();
+				recordCount++;
+			}
+			
+			//CLOSE SCANNER OBJECT
+			infile.close();
+			
+			//BUBBLE SORT
+			int last = recordCount - 1;
+			
+			while (last > 0)
+			{
+				int index = 0;
+				boolean swap = false;
+				
+				while (index < last)
+				{
+					if (itemIDs[index] > itemIDs[index + 1])
+					{
+						//SWAP ITEMID ELEMENTS
+						tmpInt = itemIDs[index + 1];
+						itemIDs[index + 1] = itemIDs[index];
+						itemIDs[index] = tmpInt;
+						
+						//SWAP ITEM NAME ELEMENTS
+						tmpString = itemNames[index + 1];
+						itemNames[index + 1] = itemNames[index];
+						itemNames[index] = tmpString;
+						
+						//SWAP ITEM PRICE ELEMENTS
+						tmpDouble = itemPrices[index + 1];
+						itemPrices[index + 1] = itemPrices[index];
+						itemPrices[index] = tmpDouble;
+						
+						//SWAP ITEM STOCK ELEMENTS
+						tmpInt = inStockCounts[index + 1];
+						inStockCounts[index + 1] = inStockCounts[index];
+						inStockCounts[index] = tmpInt;
+						
+						//SET SWAP FLAG TO TRUE
+						swap = true;
+					}
+					
+					//INCREMENT INDEX COUNTER
+					index++;
+				}
+				
+				if (swap == false)
+				{
+					last = 0;
+				}
+				else
+				{
+					last = last - 1;
+				}
+			}
+			
+		}//END TRY
+		
+		catch (IOException ex)
+		{
+			recordCount = NOT_FOUND;
+		}//END CATCH
+		
+	}
+	
+	//METHOD TO SET INVENTORY STOCKS FROM MASTER FILE NAME
+	public void setLoadItems(String borrowedFileName, int borrowedSize)
+	{
+		//LOCAL VARIABLES
+		String tmpString = "";
+		int tmpInt = 0;
+		double tmpDouble = 0;
+		
+		//RESET ARRAYS TO LENGTH OF RECORDCOUNT FROM MASTERFILE
+		itemIDs = new int[borrowedSize];
+		itemNames = new String[borrowedSize];
+		itemPrices = new double[borrowedSize];
+		orderQuantity = new int[borrowedSize];
+		orderTotal = new double[borrowedSize];
+		
+		//RESET RECORD COUNT TO 0
+		recordCount = RESET_VALUE;
+		
+		try
+		{
+			//INITIATE SCANNER
+			Scanner infile = new Scanner(new FileInputStream(borrowedFileName));
+			
+			//VERIFICATION LOOP
+			while (infile.hasNext() == true && recordCount < borrowedSize)
+			{
+				//WRITING DATA TO ARRAYS
+				itemIDs[recordCount] = infile.nextInt();
+				itemNames[recordCount] = infile.next();
+				itemPrices[recordCount] = infile.nextDouble();
+				orderQuantity[recordCount] = infile.nextInt();
+				orderTotal[recordCount] = infile.nextDouble();
+				recordCount++;
+			}
+			
+			//CLOSE SCANNER OBJECT
+			infile.close();
+			
+			//BUBBLE SORT
+			int last = recordCount - 1;
+			
+			while (last > 0)
+			{
+				int index = 0;
+				boolean swap = false;
+				
+				while (index < last)
+				{
+					if (itemIDs[index] > itemIDs[index + 1])
+					{
+						//SWAP ITEMID ELEMENTS
+						tmpInt = itemIDs[index + 1];
+						itemIDs[index + 1] = itemIDs[index];
+						itemIDs[index] = tmpInt;
+						
+						//SWAP ITEM NAME ELEMENTS
+						tmpString = itemNames[index + 1];
+						itemNames[index + 1] = itemNames[index];
+						itemNames[index] = tmpString;
+						
+						//SWAP ITEM PRICE ELEMENTS
+						tmpDouble = itemPrices[index + 1];
+						itemPrices[index + 1] = itemPrices[index];
+						itemPrices[index] = tmpDouble;
+						
+						//SWAP ITEM QTY ELEMENTS
+						tmpInt = orderQuantity[index + 1];
+						orderQuantity[index + 1] = orderQuantity[index];
+						orderQuantity[index] = tmpInt;
+						
+						//SWAP ITEM PRICE ELEMENTS
+						tmpDouble = orderTotal[index + 1];
+						orderTotal[index + 1] = orderTotal[index];
+						orderTotal[index] = tmpDouble;
+					
+						//SET SWAP FLAG TO TRUE
+						swap = true;
+					}
+					
+					//INCREMENT INDEX COUNTER
+					index++;
+				}
+				
+				if (swap == false)
+				{
+					last = 0;
+				}
+				else
+				{
+					last = last - 1;
+				}
+			}
+			
+		}//END TRY
+		
+		catch (IOException ex)
+		{
+			recordCount = NOT_FOUND;
+		}//END CATCH
+		
+	}
+
+	//METHOD TO SET THE SEARCH INDEX
+	public void setSearchIndex(int borrowedTarget)
+	{
+		itemSearchIndex = getSearchResults(borrowedTarget);
+	}
+	
+	//GETTERS
+	//METHOD TO GET STOCK COUNTS ARRAY
+	public int[] getInStockCounts()
+	{
+		return inStockCounts;
+	}//END OF METHOD
+	
+	//
+	public int[] getItemIDs()
+	{
+		return itemIDs;
+	}
+
+	//METHOD TO GET ITEM_NAMES ARRAY
+	public String[] getItemNames()
+	{
+		return itemNames;
+	}//END OF METHOD
+
+	//METHOD TO GET ITEM_PRICES ARRAY
+	public double[] getItemPrices()
+	{
+		return itemPrices;
+	}//END OF METHOD
+
+	//METHOD TO GET ORDER QUANTITIES
+	public int[] getOrderQuantity()
+	{
+		return orderQuantity;
+	}//END OF METHOD
+	
+	//METHOD TO GET THE ORDER TOTAL
+	public double[] getOrderTotal()
+	{
+		return orderTotal;
+	}//END OF METHOD
+	//METHOD TO GET DISCOUNT_NAMES ARRAY
+	public String[] getDiscountNames()
+	{
+		return DISCOUNT_NAMES;
+	}//END OF METHOD
+
+	//METHOD TO GET DISCOUNT_RATES ARRAY
+	public double[] getDiscountRates()
+	{
+		return DISCOUNT_RATES;
+	}//END OF METHOD
+
+	//METHOD TO GET PRIZE NAMES ARRAY
+	public String[] getPrizeNames()
+	{
+		return PRIZE_NAMES;
+	}//END OF METHOD
+
+	//METHOD TO GET RANDOM NUMBER FROM LENGTH OF PRIZE NAME ARRAY
+	public int getRandomNumber()
+	{
+		return prizeGenerator.nextInt(PRIZE_NAMES.length);
+	}//END OF METHOD
+	
+	//METHOD TO GET THE SEARCH INDEX
+	public int getSearchIndex()
+	{
+		return itemSearchIndex;
+	}
+	
+	//METHOD TO GET THE RECORDS COUNT
+	public int getRecordCount()
+	{
+		return recordCount;
+	}
+	
+	//METHOD TO RETURN SEARCH RESULTS USING BINARY SEARCH
+	public int getSearchResults(int queriedValue)
+	{
+		//LOCAL VARIABLES
+		int first = 0;
+		int last = recordCount - 1;
+		boolean found = false;
+		int mid = 0;
+		
+		//VERIFICATION LOOP
+		while (first <= last && found == false)
+		{
+			mid = (first + last) / 2;
+			
+			if (itemIDs[mid] == queriedValue)
+			{
+				found = true;
+			}
+			else
+			{
+				if (itemIDs[mid] < queriedValue)
+				{
+					first = mid + 1;
+				}
+				else
+				{
+					last = mid - 1;
+				}
+			}
+		}
+		
+		if (found == false)
+		{
+			mid = -1;
+		}
+		
+		//RETURN VALUE
+		return mid;
+	}
+}
